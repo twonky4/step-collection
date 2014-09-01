@@ -42,6 +42,7 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 				return prev.add(object);
 			} else {
 				current.remove(minCurrent);
+				prev.add(minCurrent);
 				minCurrent = null;
 				boolean added = current.add(object);
 				if (object.compareTo(maxCurrent) >= 0) {
@@ -94,6 +95,7 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 	}
 
 	private void refreshMax() {
+		maxCurrent = null;
 		for (T object : current) {
 			if (maxCurrent == null) {
 				maxCurrent = object;
@@ -104,6 +106,7 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 	}
 
 	private void refreshMin() {
+		minCurrent = null;
 		for (T object : current) {
 			if (minCurrent == null) {
 				minCurrent = object;
@@ -156,7 +159,7 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 
 	@Override
 	public boolean contains(Object object) {
-		return current.contains(object) || prev.contains(object);
+		return current.contains(object);
 	}
 
 	@Override
