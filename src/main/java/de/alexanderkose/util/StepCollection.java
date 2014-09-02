@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+// TODO: add resort
 public class StepCollection<T extends Comparable<T>> implements Collection<T> {
     private final Object lock = new Object();
     private final TreeSet<T> current;
