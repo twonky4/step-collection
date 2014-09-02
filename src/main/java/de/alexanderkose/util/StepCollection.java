@@ -241,11 +241,28 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
         synchronized (lock) {
             final int prime = 31;
             int result = 1;
-            result = prime * result + current.hashCode();
-            result = prime * result + prev.hashCode();
+            result = prime * result + getTreeSetHashCode(current);
+            result = prime * result + getTreeSetHashCode(prev);
             result = prime * result + size;
             result = prime * result + steps;
             return result;
+        }
+    }
+
+    private int getTreeSetHashCode(TreeSet<T> set) {
+        Iterator<T> it = set.iterator();
+        if (!it.hasNext()) {
+            return 0;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (;;) {
+            T e = it.next();
+            sb.append(String.valueOf(e.hashCode()));
+            if (!it.hasNext()) {
+                return sb.toString().hashCode();
+            }
+            sb.append(',');
         }
     }
 
@@ -317,9 +334,14 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
         }
     }
 
+    /**
+     * Refresh inserted element order by compare all objects again.
+     * 
+     * @return true, if order has changed
+     */
     public boolean reorder() {
         synchronized (lock) {
-            int oldHash = this.hashCode();
+            int oldHash = hashCode();
             ArrayList<T> backUpList = new ArrayList<T>();
             backUpList.addAll(current);
             backUpList.addAll(prev);
@@ -332,7 +354,7 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
                 add(o);
             }
 
-            return oldHash != this.hashCode();
+            return oldHash != hashCode();
         }
     }
 }

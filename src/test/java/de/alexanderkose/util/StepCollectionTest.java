@@ -686,6 +686,16 @@ public class StepCollectionTest {
 
         assertFalse(list.reorder());
 
+        r2.setSort("3");
+        r3.setSort("2");
+        assertTrue(list.reorder());
+
+        i = list.iterator();
+        assertEquals(r1, i.next());
+        assertEquals(r3, i.next());
+        assertEquals(r2, i.next());
+        assertEquals(r4, i.next());
+
         r2.setSort("6");
         assertTrue(list.reorder());
 
