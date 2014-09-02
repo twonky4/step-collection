@@ -194,6 +194,20 @@ public class StepCollectionTest {
         list = new StepCollection<>(2);
         nextStep = list.nextStep();
         assertEmpty(nextStep);
+
+        list = new StepCollection<>(2);
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.nextStep();
+        list.remove("3");
+        list.add("3");
+
+        nextStep = list.nextStep();
+        assertNotEmpty(nextStep);
+        assertEquals(1, nextStep.size());
+        i = nextStep.iterator();
+        assertEquals("3", i.next());
     }
 
     @Test
@@ -623,6 +637,15 @@ public class StepCollectionTest {
         list.add("3");
         list.nextStep();
         assertFalse(list.isStepable());
+
+        list = new StepCollection<>(2);
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.nextStep();
+        list.remove("3");
+        list.add("3");
+        assertTrue(list.isStepable());
     }
 
     @Test

@@ -197,9 +197,12 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
         }
 
         synchronized (lock) {
+            // remove from prev
             if (prev.contains(object)) {
                 return prev.remove(object);
-            } else if (current.contains(object)) {
+            } else
+            // remove from current
+            if (current.contains(object)) {
                 current.remove(object);
                 minCurrent = getLastPrev();
                 if (minCurrent != null) {
@@ -212,6 +215,12 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
                 if (object == maxCurrent) {
                     refreshMax();
                 }
+
+                // reset size
+                if (current.size() == size - steps) {
+                    size -= steps;
+                }
+
                 return true;
             }
             return false;
