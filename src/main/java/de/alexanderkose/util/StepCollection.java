@@ -3,9 +3,10 @@ package de.alexanderkose.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 public class StepCollection<T extends Comparable<T>> implements Collection<T> {
-	private final ArrayList<T> current;
+	private final TreeSet<T> current;
 	private final ArrayList<T> prev;
 	private int size;
 	private final int steps;
@@ -14,7 +15,7 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 	private T minCurrent;
 
 	public StepCollection(int size) {
-		current = new ArrayList<>(size);
+		current = new TreeSet<>();
 		prev = new ArrayList<>();
 
 		this.size = size;
@@ -39,14 +40,14 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 		}
 		// second element, array full
 		else if (size() >= size) {
-			if (object.compareTo(minCurrent) <= 0) {
+			if (object.compareTo(minCurrent) > 0) {
 				return prev.add(object);
 			} else {
 				current.remove(minCurrent);
 				prev.add(minCurrent);
 				minCurrent = null;
 				boolean added = current.add(object);
-				if (object.compareTo(maxCurrent) >= 0) {
+				if (object.compareTo(maxCurrent) < 0) {
 					maxCurrent = object;
 				}
 				refreshMin();
@@ -56,9 +57,9 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 		}
 		// second element, array not full
 		else {
-			if (object.compareTo(maxCurrent) >= 0) {
+			if (object.compareTo(maxCurrent) < 0) {
 				maxCurrent = object;
-			} else if (object.compareTo(minCurrent) < 0) {
+			} else if (object.compareTo(minCurrent) > 0) {
 				minCurrent = object;
 			}
 
@@ -109,7 +110,7 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 		for (T object : current) {
 			if (maxCurrent == null) {
 				maxCurrent = object;
-			} else if (object.compareTo(maxCurrent) >= 0) {
+			} else if (object.compareTo(maxCurrent) < 0) {
 				maxCurrent = object;
 			}
 		}
@@ -120,7 +121,7 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 		for (T object : current) {
 			if (minCurrent == null) {
 				minCurrent = object;
-			} else if (object.compareTo(minCurrent) < 0) {
+			} else if (object.compareTo(minCurrent) >= 0) {
 				minCurrent = object;
 			}
 		}
@@ -166,7 +167,7 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 		for (T object : prev) {
 			if (newLast == null) {
 				newLast = object;
-			} else if (object.compareTo(newLast) >= 0) {
+			} else if (object.compareTo(newLast) < 0) {
 				newLast = object;
 			}
 		}
@@ -215,22 +216,52 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-		return current.iterator();
+		ArrayList<T> list = new ArrayList<>(current);
+		return list.iterator();
 	}
 
 	@Override
 	public int hashCode() {
-		return current.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + current.hashCode();
+		result = prime * result + prev.hashCode();
+		result = prime * result + size;
+		result = prime * result + steps;
+		return result;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		return current.equals(o);
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		@SuppressWarnings("rawtypes")
+		StepCollection other = (StepCollection) obj;
+		if (!current.equals(other.current)) {
+			return false;
+		}
+		if (!prev.equals(other.prev)) {
+			return false;
+		}
+		if (size != other.size) {
+			return false;
+		}
+		if (steps != other.steps) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		throw new RuntimeException("Not yet implemented");
+		return current.containsAll(c);
 	}
 
 	@Override
@@ -240,6 +271,17 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		throw new RuntimeException("Not yet implemented");
+		if (c == null || c.isEmpty()) {
+			return false;
+		}
+		boolean removed = false;
+		for (Object object : c) {
+			@SuppressWarnings("unchecked")
+			boolean oneRemoved = remove((T) object);
+			if (oneRemoved) {
+				removed = true;
+			}
+		}
+		return removed;
 	}
 }

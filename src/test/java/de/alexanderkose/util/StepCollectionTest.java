@@ -2,9 +2,13 @@ package de.alexanderkose.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
@@ -184,13 +188,13 @@ public class StepCollectionTest {
 		list.add("6");
 		list.add("7");
 
-		assertFalse(list.contains("1"));
-		assertFalse(list.contains("2"));
+		assertTrue(list.contains("1"));
+		assertTrue(list.contains("2"));
 		assertTrue(list.contains("3"));
 		assertTrue(list.contains("4"));
 		assertTrue(list.contains("5"));
-		assertTrue(list.contains("6"));
-		assertTrue(list.contains("7"));
+		assertFalse(list.contains("6"));
+		assertFalse(list.contains("7"));
 	}
 
 	@Test
@@ -220,5 +224,350 @@ public class StepCollectionTest {
 		tmpList.add("6");
 
 		assertTrue(list.addAll(tmpList));
+	}
+
+	@Test
+	public void testIterator1() {
+		StepCollection<String> list = new StepCollection<String>(5);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+
+		Iterator<String> iterator = list.iterator();
+
+		assertTrue(iterator.hasNext());
+		String next = iterator.next();
+		assertNotNull(next);
+		assertEquals("1", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("2", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("3", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("4", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("5", next);
+
+		assertFalse(iterator.hasNext());
+		try {
+			next = iterator.next();
+			fail();
+		} catch (NoSuchElementException e) {
+		}
+	}
+
+	@Test
+	public void testIterator2() {
+		StepCollection<String> list = new StepCollection<String>(5);
+		list.add("7");
+		list.add("6");
+		list.add("5");
+		list.add("4");
+		list.add("3");
+		list.add("2");
+		list.add("1");
+
+		Iterator<String> iterator = list.iterator();
+
+		assertTrue(iterator.hasNext());
+		String next = iterator.next();
+		assertNotNull(next);
+		assertEquals("1", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("2", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("3", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("4", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("5", next);
+
+		assertFalse(iterator.hasNext());
+		try {
+			next = iterator.next();
+			fail();
+		} catch (NoSuchElementException e) {
+		}
+	}
+
+	@Test
+	public void testIterator3() {
+		StepCollection<String> list = new StepCollection<String>(5);
+		list.add("7");
+		list.add("6");
+		list.add("5");
+		list.add("4");
+		list.add("3");
+		list.add("2");
+		list.add("1");
+
+		Iterator<String> iterator = list.iterator();
+
+		assertTrue(iterator.hasNext());
+		String next = iterator.next();
+		assertNotNull(next);
+		assertEquals("1", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("2", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("3", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("4", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("5", next);
+
+		list.nextStep();
+
+		assertFalse(iterator.hasNext());
+		try {
+			next = iterator.next();
+			fail();
+		} catch (NoSuchElementException e) {
+		}
+	}
+
+	@Test
+	public void testIterator4() {
+		StepCollection<String> list = new StepCollection<String>(5);
+		list.add("7");
+		list.add("6");
+		list.add("5");
+		list.add("4");
+		list.add("3");
+		list.add("2");
+		list.add("1");
+
+		list.nextStep();
+
+		Iterator<String> iterator = list.iterator();
+
+		assertTrue(iterator.hasNext());
+		String next = iterator.next();
+		assertNotNull(next);
+		assertEquals("1", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("2", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("3", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("4", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("5", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("6", next);
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("7", next);
+
+		assertFalse(iterator.hasNext());
+		try {
+			next = iterator.next();
+			fail();
+		} catch (NoSuchElementException e) {
+		}
+	}
+
+	@Test
+	public void testRemoveAll() {
+		StepCollection<String> list = new StepCollection<String>(5);
+		assertFalse(list.removeAll(null));
+
+		ArrayList<String> tmpList = new ArrayList<String>();
+
+		list = new StepCollection<String>(5);
+		assertFalse(list.removeAll(tmpList));
+
+		list = new StepCollection<String>(5);
+		ArrayList<Integer> intList = new ArrayList<Integer>();
+		intList.add(5);
+		assertFalse(list.removeAll(intList));
+
+		tmpList.add("5");
+
+		list = new StepCollection<String>(5);
+		assertFalse(list.removeAll(tmpList));
+
+		list = new StepCollection<String>(5);
+		list.add("5");
+		assertTrue(list.removeAll(tmpList));
+	}
+
+	@Test
+	public void testHashCode() {
+		StepCollection<String> list1 = new StepCollection<String>(2);
+		StepCollection<String> list2 = new StepCollection<String>(2);
+		list1.add("1");
+		list1.add("2");
+		list1.add("3");
+		list2.add("3");
+		list2.add("2");
+		list2.add("1");
+
+		int hashCode = list1.hashCode();
+		assertTrue(hashCode == list2.hashCode());
+
+		list1 = new StepCollection<String>(2);
+		list2 = new StepCollection<String>(2);
+		list1.add("1");
+		list1.add("2");
+		list1.add("3");
+		list2.add("3");
+		list2.add("2");
+		list2.add("1");
+		list2.add("4");
+
+		assertFalse(list1.hashCode() == list2.hashCode());
+	}
+
+	@Test
+	public void testToArray() {
+		StepCollection<String> list = new StepCollection<String>(2);
+		list.add("3");
+		list.add("1");
+		list.add("2");
+
+		Object[] array = list.toArray();
+		assertNotNull(array);
+		assertEquals(2, array.length);
+		assertNotNull(array[0]);
+		assertNotNull(array[1]);
+		assertEquals("1", array[0]);
+		assertEquals("2", array[1]);
+	}
+
+	@Test
+	public void testToArrayType() {
+		StepCollection<String> list = new StepCollection<String>(2);
+		list.add("3");
+		list.add("1");
+		list.add("2");
+
+		String[] array = list.toArray(new String[] {});
+		assertNotNull(array);
+		assertEquals(2, array.length);
+		assertNotNull(array[0]);
+		assertNotNull(array[1]);
+		assertEquals("1", array[0]);
+		assertEquals("2", array[1]);
+	}
+
+	@Test
+	public void testEuqals() {
+		StepCollection<String> list1 = new StepCollection<String>(2);
+		assertFalse(list1.equals(null));
+
+		list1 = new StepCollection<String>(2);
+		assertFalse(list1.equals(new Object()));
+
+		list1 = new StepCollection<String>(2);
+		assertTrue(list1.equals(list1));
+
+		list1 = new StepCollection<String>(2);
+		StepCollection<String> list2 = new StepCollection<String>(2);
+		assertTrue(list1.equals(list2));
+
+		list1 = new StepCollection<String>(2);
+		list2 = new StepCollection<String>(3);
+		assertFalse(list1.equals(list2));
+
+		list1 = new StepCollection<String>(2);
+		list1.add("1");
+		list1.add("2");
+		list1.add("3");
+		list2 = new StepCollection<String>(2);
+		list2.add("1");
+		list2.add("2");
+		list2.add("3");
+		assertTrue(list1.equals(list2));
+
+		list1 = new StepCollection<String>(2);
+		list1.add("1");
+		list1.add("2");
+		list1.add("3");
+		list1.nextStep();
+		list2 = new StepCollection<String>(2);
+		list2.add("1");
+		list2.add("2");
+		list2.add("3");
+		assertFalse(list1.equals(list2));
+
+		list1 = new StepCollection<String>(2);
+		list1.add("1");
+		list1.add("2");
+		list1.add("3");
+		list2 = new StepCollection<String>(2);
+		list2.add("1");
+		list2.add("2");
+		assertFalse(list1.equals(list2));
+
+		list1 = new StepCollection<String>(4);
+		list1.add("1");
+		list1.add("2");
+		list1.add("3");
+		list1.add("4");
+		list2 = new StepCollection<String>(2);
+		list2.add("1");
+		list2.add("2");
+		list2.add("3");
+		list2.add("4");
+		list2.nextStep();
+		assertFalse(list1.equals(list2));
 	}
 }
