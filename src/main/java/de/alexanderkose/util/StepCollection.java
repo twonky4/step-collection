@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-// TODO: add resort
 public class StepCollection<T extends Comparable<T>> implements Collection<T> {
     private final Object lock = new Object();
     private final TreeSet<T> current;
@@ -75,7 +74,6 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
     @Override
     public void clear() {
         synchronized (lock) {
-
             size = steps;
             maxCurrent = null;
             minCurrent = null;
@@ -316,6 +314,25 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
                 }
             }
             return removed;
+        }
+    }
+
+    public boolean reorder() {
+        synchronized (lock) {
+            int oldHash = this.hashCode();
+            ArrayList<T> backUpList = new ArrayList<T>();
+            backUpList.addAll(current);
+            backUpList.addAll(prev);
+            int backUpSize = size;
+
+            clear();
+
+            size = backUpSize;
+            for (T o : backUpList) {
+                add(o);
+            }
+
+            return oldHash != this.hashCode();
         }
     }
 }

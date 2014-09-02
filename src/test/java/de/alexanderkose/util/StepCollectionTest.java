@@ -662,6 +662,89 @@ public class StepCollectionTest {
         assertTrue(list.containsAll(tmpList));
     }
 
+    @Test
+    public void testReorder() {
+        StepCollection<ReorderEntity> list = new StepCollection<>(2);
+        ReorderEntity r1 = new ReorderEntity("1", "1");
+        ReorderEntity r2 = new ReorderEntity("2", "2");
+        ReorderEntity r3 = new ReorderEntity("3", "3");
+        ReorderEntity r4 = new ReorderEntity("4", "4");
+        ReorderEntity r5 = new ReorderEntity("5", "5");
+
+        list.add(r1);
+        list.add(r2);
+        list.add(r3);
+        list.add(r4);
+        list.add(r5);
+        list.nextStep();
+
+        Iterator<ReorderEntity> i = list.iterator();
+        assertEquals(r1, i.next());
+        assertEquals(r2, i.next());
+        assertEquals(r3, i.next());
+        assertEquals(r4, i.next());
+
+        assertFalse(list.reorder());
+
+        r2.setSort("6");
+        assertTrue(list.reorder());
+
+        i = list.iterator();
+        assertEquals(r1, i.next());
+        assertEquals(r3, i.next());
+        assertEquals(r4, i.next());
+        assertEquals(r5, i.next());
+    }
+
+    private class ReorderEntity implements Comparable<ReorderEntity> {
+        private final String value;
+        private String sort;
+
+        public ReorderEntity(String value, String sort) {
+            this.value = value;
+            this.sort = sort;
+        }
+
+        public void setSort(String sort) {
+            this.sort = sort;
+        }
+
+        @Override
+        public int compareTo(ReorderEntity o) {
+            return sort.compareTo(o.sort);
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            ReorderEntity other = (ReorderEntity) obj;
+            if (value == null) {
+                if (other.value != null) {
+                    return false;
+                }
+            } else if (!value.equals(other.value)) {
+                return false;
+            }
+            return true;
+        }
+    }
+
     private static void assertNotEmpty(Collection<String> nextStep) {
         assertNotNull(nextStep);
         assertFalse(nextStep.isEmpty());
