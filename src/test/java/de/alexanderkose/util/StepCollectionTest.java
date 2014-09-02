@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 public class StepCollectionTest {
@@ -67,6 +69,17 @@ public class StepCollectionTest {
 		assertTrue(list.remove("5"));
 		assertTrue(list.remove("1"));
 		assertFalse(list.remove("0"));
+
+		list = new StepCollection<String>(5);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+
+		assertTrue(list.remove("1"));
 	}
 
 	@Test
@@ -90,6 +103,14 @@ public class StepCollectionTest {
 		assertTrue(list.add("6"));
 		assertFalse(list.add("6"));
 		assertFalse(list.add("1"));
+
+		list = new StepCollection<String>(5);
+		assertTrue(list.add("6"));
+		assertTrue(list.add("5"));
+		assertTrue(list.add("4"));
+		assertTrue(list.add("3"));
+		assertTrue(list.add("2"));
+		assertTrue(list.add("1"));
 	}
 
 	@Test
@@ -170,5 +191,34 @@ public class StepCollectionTest {
 		assertTrue(list.contains("5"));
 		assertTrue(list.contains("6"));
 		assertTrue(list.contains("7"));
+	}
+
+	@Test
+	public void testAddAll() {
+		StepCollection<String> list = new StepCollection<String>(5);
+		assertFalse(list.addAll(null));
+
+		ArrayList<String> tmpList = new ArrayList<>();
+
+		list = new StepCollection<String>(5);
+		assertFalse(list.addAll(tmpList));
+
+		tmpList.add("1");
+		tmpList.add("5");
+
+		list = new StepCollection<String>(5);
+		assertTrue(list.addAll(tmpList));
+		assertFalse(list.addAll(tmpList));
+
+		tmpList.add("2");
+		tmpList.add("3");
+		tmpList.add("4");
+
+		list = new StepCollection<String>(5);
+		assertTrue(list.addAll(tmpList));
+
+		tmpList.add("6");
+
+		assertTrue(list.addAll(tmpList));
 	}
 }
