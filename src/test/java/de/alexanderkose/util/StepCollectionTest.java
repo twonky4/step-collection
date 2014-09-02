@@ -211,6 +211,11 @@ public class StepCollectionTest {
     }
 
     @Test
+    public void testPrevStep() {
+        // TODO: implement
+    }
+
+    @Test
     public void testContains() {
         StepCollection<String> list = new StepCollection<>(5);
         assertFalse(list.contains("0"));

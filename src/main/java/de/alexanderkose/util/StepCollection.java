@@ -110,6 +110,11 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
         }
     }
 
+    public Collection<T> prevStep() {
+        // TODO: implement
+        return null;
+    }
+
     private void refreshMax() {
         maxCurrent = null;
         if (!current.isEmpty()) {
