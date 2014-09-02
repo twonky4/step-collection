@@ -32,6 +32,9 @@ public class StepCollectionTest {
 		assertFalse(list.remove("0"));
 
 		list = new StepCollection<String>(5);
+		assertFalse(list.remove(null));
+
+		list = new StepCollection<String>(5);
 		list.add("1");
 		assertTrue(list.remove("1"));
 		assertFalse(list.remove("1"));
@@ -70,6 +73,9 @@ public class StepCollectionTest {
 	public void testAddObject() {
 		StepCollection<String> list = new StepCollection<String>(5);
 		assertTrue(list.add("0"));
+
+		list = new StepCollection<String>(5);
+		assertFalse(list.add(null));
 
 		list = new StepCollection<String>(5);
 		assertTrue(list.add("1"));
