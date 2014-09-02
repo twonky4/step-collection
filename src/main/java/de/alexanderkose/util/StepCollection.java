@@ -8,7 +8,7 @@ import java.util.TreeSet;
 public class StepCollection<T extends Comparable<T>> implements Collection<T> {
     private final Object lock = new Object();
     private final TreeSet<T> current;
-    private final ArrayList<T> prev;
+    private final TreeSet<T> prev;
     private final int steps;
 
     private int size;
@@ -18,7 +18,7 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 
     public StepCollection(int size) {
         current = new TreeSet<>();
-        prev = new ArrayList<>();
+        prev = new TreeSet<>();
 
         this.size = size;
         steps = size;
@@ -113,23 +113,15 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 
     private void refreshMax() {
         maxCurrent = null;
-        for (T object : current) {
-            if (maxCurrent == null) {
-                maxCurrent = object;
-            } else if (object.compareTo(maxCurrent) < 0) {
-                maxCurrent = object;
-            }
+        if (!current.isEmpty()) {
+            maxCurrent = current.first();
         }
     }
 
     private void refreshMin() {
         minCurrent = null;
-        for (T object : current) {
-            if (minCurrent == null) {
-                minCurrent = object;
-            } else if (object.compareTo(minCurrent) >= 0) {
-                minCurrent = object;
-            }
+        if (!current.isEmpty()) {
+            minCurrent = current.last();
         }
     }
 
@@ -179,15 +171,10 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
     }
 
     private T getLastPrev() {
-        T newLast = null;
-        for (T object : prev) {
-            if (newLast == null) {
-                newLast = object;
-            } else if (object.compareTo(newLast) < 0) {
-                newLast = object;
-            }
+        if (prev.isEmpty()) {
+            return null;
         }
-        return newLast;
+        return prev.first();
     }
 
     @Override
