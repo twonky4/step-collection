@@ -493,6 +493,11 @@ public class StepCollectionTest {
     public void testHashCode() {
         StepCollection<String> list1 = new StepCollection<>(2);
         StepCollection<String> list2 = new StepCollection<>(2);
+
+        assertTrue(list1.hashCode() == list2.hashCode());
+
+        list1 = new StepCollection<>(2);
+        list2 = new StepCollection<>(2);
         list1.add("1");
         list1.add("2");
         list1.add("3");
@@ -500,8 +505,7 @@ public class StepCollectionTest {
         list2.add("2");
         list2.add("1");
 
-        int hashCode = list1.hashCode();
-        assertTrue(hashCode == list2.hashCode());
+        assertTrue(list1.hashCode() == list2.hashCode());
 
         list1 = new StepCollection<>(2);
         list2 = new StepCollection<>(2);
