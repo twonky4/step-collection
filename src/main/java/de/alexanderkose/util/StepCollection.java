@@ -1,13 +1,10 @@
 package de.alexanderkose.util;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
-public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
+public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 	private final ArrayList<T> current;
 	private final ArrayList<T> prev;
 	private int size;
@@ -16,7 +13,7 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 	private T maxCurrent;
 	private T minCurrent;
 
-	public StepArrayList(int size) {
+	public StepCollection(int size) {
 		current = new ArrayList<>(size);
 		prev = new ArrayList<>();
 
@@ -27,6 +24,10 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 	@Override
 	public boolean add(T object) {
 		if (object == null) {
+			return false;
+		}
+
+		if (current.contains(object) || prev.contains(object)) {
 			return false;
 		}
 
@@ -74,24 +75,32 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 		prev.clear();
 	}
 
-	public void nextStep() {
+	public boolean nextStep() {
 		if (prev.isEmpty()) {
-			return;
+			return false;
 		}
+		boolean added = false;
 		if (prev.size() <= steps) {
-			addAll(prev);
+			added = current.addAll(prev);
 			prev.clear();
-			size += steps;
 			refreshMin();
 		} else {
 			for (int s = 0; s < steps && !prev.isEmpty(); s++) {
 				T newLast = getLastPrev();
 				if (newLast != null) {
-					current.add(newLast);
+					boolean oneAdded = current.add(newLast);
+					if (oneAdded) {
+						added = true;
+						prev.remove(newLast);
+					}
 				}
 				minCurrent = newLast;
 			}
 		}
+		if (added) {
+			size += steps;
+		}
+		return added;
 	}
 
 	private void refreshMax() {
@@ -118,29 +127,18 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 
 	@Override
 	public boolean addAll(Collection<? extends T> collection) {
-		if (collection.isEmpty()) {
+		if (collection == null || collection.isEmpty()) {
 			return false;
 		}
 
+		boolean added = false;
 		for (T object : collection) {
-			add(object);
+			boolean oneAdded = add(object);
+			if (oneAdded) {
+				added = true;
+			}
 		}
-		return true;
-	}
-
-	@Override
-	public boolean addAll(int index, Collection<? extends T> collection) {
-		throw new RuntimeException("Not yet implemented");
-	}
-
-	@Override
-	public void add(int index, T object) {
-		throw new RuntimeException("Not yet implemented");
-	}
-
-	@Override
-	public T get(int index) {
-		return current.get(index);
+		return added;
 	}
 
 	@Override
@@ -162,16 +160,6 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 		return current.contains(object);
 	}
 
-	@Override
-	public int indexOf(Object object) {
-		return current.indexOf(object);
-	}
-
-	@Override
-	public int lastIndexOf(Object object) {
-		return current.indexOf(object);
-	}
-
 	private T getLastPrev() {
 		T newLast = null;
 		for (T object : prev) {
@@ -182,23 +170,6 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 			}
 		}
 		return newLast;
-	}
-
-	@Override
-	public T remove(int index) {
-		T removedObj = current.remove(index);
-
-		T newLast = getLastPrev();
-		if (newLast != null) {
-			prev.remove(newLast);
-			current.add(newLast);
-		}
-		minCurrent = newLast;
-		if (removedObj == maxCurrent) {
-			refreshMax();
-		}
-
-		return removedObj;
 	}
 
 	@Override
@@ -214,8 +185,10 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 			if (removed) {
 				T newLast = getLastPrev();
 				if (newLast != null) {
-					prev.remove(newLast);
-					current.add(newLast);
+					boolean oneAdded = current.add(newLast);
+					if (oneAdded) {
+						prev.remove(newLast);
+					}
 				}
 				minCurrent = newLast;
 
@@ -226,11 +199,6 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 			return removed;
 		}
 		return false;
-	}
-
-	@Override
-	public T set(int index, T object) {
-		throw new RuntimeException("Not yet implemented");
 	}
 
 	@Override
@@ -260,17 +228,17 @@ public class StepArrayList<T extends Comparable<T>> extends AbstractList<T> {
 	}
 
 	@Override
-	public ListIterator<T> listIterator() {
+	public boolean containsAll(Collection<?> c) {
 		throw new RuntimeException("Not yet implemented");
 	}
 
 	@Override
-	public ListIterator<T> listIterator(int location) {
+	public boolean retainAll(Collection<?> c) {
 		throw new RuntimeException("Not yet implemented");
 	}
 
 	@Override
-	public List<T> subList(int start, int end) {
+	public boolean removeAll(Collection<?> c) {
 		throw new RuntimeException("Not yet implemented");
 	}
 }
