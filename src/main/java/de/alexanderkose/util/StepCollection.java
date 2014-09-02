@@ -76,9 +76,10 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 	}
 
 	public boolean nextStep() {
-		if (prev.isEmpty()) {
+		if (!isStepable()) {
 			return false;
 		}
+
 		boolean added = false;
 		if (prev.size() <= steps) {
 			added = current.addAll(prev);
