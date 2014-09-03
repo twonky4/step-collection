@@ -827,6 +827,21 @@ public class StepCollectionTest {
 	}
 
 	@Test
+	public void testToString() {
+		StepCollection<String> list = new StepCollection<>(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.nextStep();
+
+		assertEquals(
+				"StepCollection [currentWindow=[1, 2, 3, 4], outOfWindow=[5], steps=2, size=4]",
+				list.toString());
+	}
+
+	@Test
 	public void testReorder() {
 		StepCollection<ReorderEntity> list = new StepCollection<>(2);
 		ReorderEntity r1 = new ReorderEntity("1", "1");

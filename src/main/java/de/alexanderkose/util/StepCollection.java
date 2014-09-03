@@ -415,4 +415,21 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T>,
 			return o;
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("StepCollection [currentWindow=");
+		synchronized (lock) {
+			sb.append(current);
+			sb.append(", outOfWindow=");
+			sb.append(prev);
+			sb.append(", steps=");
+			sb.append(steps);
+			sb.append(", size=");
+			sb.append(size);
+		}
+		sb.append(']');
+
+		return sb.toString();
+	}
 }
