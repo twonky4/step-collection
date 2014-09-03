@@ -3,10 +3,11 @@ package de.alexanderkose.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeSet;
 
-public class StepCollection<T extends Comparable<T>> implements Collection<T>,
-		Cloneable {
+public class StepCollection<T extends Comparable<T>> implements Cloneable,
+		Set<T> {
 	private final Object lock = new Object();
 	private TreeSet<T> current;
 	private TreeSet<T> prev;
