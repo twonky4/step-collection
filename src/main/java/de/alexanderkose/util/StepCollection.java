@@ -5,10 +5,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-public class StepCollection<T extends Comparable<T>> implements Collection<T> {
+public class StepCollection<T extends Comparable<T>> implements Collection<T>,
+		Cloneable {
 	private final Object lock = new Object();
-	private final TreeSet<T> current;
-	private final TreeSet<T> prev;
+	private TreeSet<T> current;
+	private TreeSet<T> prev;
 	private final int steps;
 
 	private int size;
@@ -79,7 +80,6 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 			minCurrent = null;
 			current.clear();
 			prev.clear();
-
 		}
 	}
 
@@ -398,6 +398,21 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 			}
 
 			return oldHash != hashCode();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public StepCollection<T> clone() {
+		synchronized (lock) {
+			StepCollection<T> o = new StepCollection<>(steps);
+			o.current = (TreeSet<T>) current.clone();
+			o.prev = (TreeSet<T>) prev.clone();
+			o.maxCurrent = maxCurrent;
+			o.minCurrent = minCurrent;
+			o.size = size;
+
+			return o;
 		}
 	}
 }

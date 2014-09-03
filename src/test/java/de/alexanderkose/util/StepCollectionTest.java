@@ -807,6 +807,26 @@ public class StepCollectionTest {
 	}
 
 	@Test
+	public void testClone() {
+		StepCollection<String> list = new StepCollection<>(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.nextStep();
+		int oHash = list.hashCode();
+
+		StepCollection<String> clone = list.clone();
+
+		assertTrue(oHash == clone.hashCode());
+
+		clone.add("6");
+
+		assertFalse(oHash == clone.hashCode());
+	}
+
+	@Test
 	public void testReorder() {
 		StepCollection<ReorderEntity> list = new StepCollection<>(2);
 		ReorderEntity r1 = new ReorderEntity("1", "1");
