@@ -89,6 +89,47 @@ public class StepCollectionTest {
 	}
 
 	@Test
+	public void testRemoveIndex() {
+		StepCollection<String> list = new StepCollection<>(5);
+		list.add("1");
+		String remove = list.remove(0);
+		assertNotNull(remove);
+		assertEquals("1", remove);
+
+		list = new StepCollection<>(5);
+		list.add("1");
+		list.add("2");
+
+		remove = list.remove(0);
+		assertNotNull(remove);
+		assertEquals("1", remove);
+		remove = list.remove(0);
+		assertNotNull(remove);
+		assertEquals("2", remove);
+
+		list = new StepCollection<>(5);
+		list.add("1");
+		list.add("2");
+
+		remove = list.remove(1);
+		assertNotNull(remove);
+		assertEquals("2", remove);
+		remove = list.remove(0);
+		assertNotNull(remove);
+		assertEquals("1", remove);
+
+		list = new StepCollection<>(5);
+		list.add("1");
+		list.add("2");
+
+		try {
+			list.remove(2);
+			fail();
+		} catch (IndexOutOfBoundsException e) {
+		}
+	}
+
+	@Test
 	public void testAddObject() {
 		StepCollection<String> list = new StepCollection<>(5);
 		assertTrue(list.add("0"));
@@ -896,6 +937,22 @@ public class StepCollectionTest {
 		assertEquals(
 				"StepCollection [currentWindow=[1, 2, 3, 4], outOfWindow=[5], steps=2, size=4]",
 				list.toString());
+	}
+
+	@Test
+	public void testGet() {
+		StepCollection<String> list = new StepCollection<>(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+
+		assertEquals("1", list.get(0));
+		assertEquals("2", list.get(1));
+
+		try {
+			assertEquals("3", list.get(2));
+		} catch (IndexOutOfBoundsException e) {
+		}
 	}
 
 	@Test

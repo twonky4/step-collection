@@ -423,8 +423,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		boolean changed;
 		synchronized (lock) {
 			int oldHash = hashCode();
-			ArrayList<T> backUpList = new ArrayList<T>();
-			backUpList.addAll(current);
+			ArrayList<T> backUpList = getWindowList();
 			backUpList.addAll(prev);
 			int backUpSize = size;
 
@@ -473,6 +472,31 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		return sb.toString();
 	}
 
+	private T getIndexObject(int index) {
+		return getWindowList().get(index);
+	}
+
+	private ArrayList<T> getWindowList() {
+		return new ArrayList<>(current);
+	}
+
+	public T get(int index) {
+		T indexObject;
+		synchronized (lock) {
+			indexObject = getIndexObject(index);
+		}
+		return indexObject;
+	}
+
+	public T remove(int index) {
+		T indexObject;
+		synchronized (lock) {
+			indexObject = getIndexObject(index);
+			remove(indexObject);
+		}
+		return indexObject;
+	}
+
 	private class Itr implements Iterator<T> {
 		private int expectedModCount = modCount;
 		private int cursor = -1;
@@ -483,7 +507,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			synchronized (this) {
 				checkForComodification();
 
-				ArrayList<T> array = getArray();
+				ArrayList<T> array = getWindowList();
 
 				hasNext = cursor + 1 < array.size();
 			}
@@ -494,7 +518,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			T next;
 			synchronized (this) {
 				cursor++;
-				ArrayList<T> array = getArray();
+				ArrayList<T> array = getWindowList();
 
 				if (cursor >= array.size()) {
 					throw new NoSuchElementException();
@@ -517,16 +541,10 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 
 				checkForComodification();
 
-				ArrayList<T> array = getArray();
-				T del = array.get(lastRet);
-				StepCollection.this.remove(del);
+				StepCollection.this.remove(lastRet);
 				expectedModCount++;
 				cursor--;
 			}
-		}
-
-		private ArrayList<T> getArray() {
-			return new ArrayList<T>(current);
 		}
 
 		final void checkForComodification() {
