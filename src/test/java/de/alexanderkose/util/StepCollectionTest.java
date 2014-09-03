@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -424,11 +425,10 @@ public class StepCollectionTest {
 
 		list.nextStep();
 
-		assertFalse(iterator.hasNext());
 		try {
-			next = iterator.next();
+			assertFalse(iterator.hasNext());
 			fail();
-		} catch (NoSuchElementException e) {
+		} catch (ConcurrentModificationException e) {
 		}
 	}
 
@@ -504,11 +504,45 @@ public class StepCollectionTest {
 		list.nextStep();
 
 		Iterator<String> i = list.iterator();
+		i.next();
+		i.remove();
+	}
+
+	@Test
+	public void testIterator6() {
+		StepCollection<String> list = new StepCollection<>(5);
+		list.add("7");
+		list.add("6");
+		list.add("5");
+		list.add("4");
+		list.add("3");
+		list.add("2");
+		list.add("1");
+
+		Iterator<String> i1 = list.iterator();
+		Iterator<String> i2 = list.iterator();
+
+		i1.next();
+		i2.next();
+		list.remove("7");
+
+		try {
+			i1.next();
+			fail();
+		} catch (ConcurrentModificationException e) {
+		}
+	}
+
+	@Test
+	public void testIterator7() {
+		StepCollection<String> list = new StepCollection<>(2);
+
+		Iterator<String> i = list.iterator();
 
 		try {
 			i.remove();
 			fail();
-		} catch (UnsupportedOperationException e) {
+		} catch (IllegalStateException e) {
 		}
 	}
 
@@ -839,7 +873,8 @@ public class StepCollectionTest {
 		list.nextStep();
 		int oHash = list.hashCode();
 
-		StepCollection<String> clone = list.clone();
+		@SuppressWarnings("unchecked")
+		StepCollection<String> clone = (StepCollection<String>) list.clone();
 
 		assertTrue(oHash == clone.hashCode());
 

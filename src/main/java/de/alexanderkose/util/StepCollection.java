@@ -2,7 +2,9 @@ package de.alexanderkose.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,6 +16,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	private final int steps;
 
 	private int size;
+	private int modCount = 0;
 
 	private T maxCurrent;
 	private T minCurrent;
@@ -41,23 +44,23 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			if (maxCurrent == null) {
 				maxCurrent = object;
 				minCurrent = object;
-				return current.add(object);
+
+				current.add(object);
 			}
 			// second element, array full
 			else if (size() >= size) {
 				if (object.compareTo(minCurrent) > 0) {
-					return prev.add(object);
+					prev.add(object);
 				} else {
 					current.remove(minCurrent);
 					prev.add(minCurrent);
 					minCurrent = null;
-					boolean added = current.add(object);
+					current.add(object);
+
 					if (object.compareTo(maxCurrent) < 0) {
 						maxCurrent = object;
 					}
 					refreshMin();
-
-					return added;
 				}
 			}
 			// second element, array not full
@@ -68,8 +71,12 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 					minCurrent = object;
 				}
 
-				return current.add(object);
+				current.add(object);
+
 			}
+
+			modCount++;
+			return true;
 		}
 	}
 
@@ -81,6 +88,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			minCurrent = null;
 			current.clear();
 			prev.clear();
+			modCount++;
 		}
 	}
 
@@ -106,6 +114,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			}
 
 			size += steps;
+			modCount++;
 
 			return list;
 		}
@@ -127,6 +136,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			}
 
 			size -= steps;
+			modCount++;
 
 			return list;
 		}
@@ -213,7 +223,9 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		synchronized (lock) {
 			// remove from prev
 			if (prev.contains(object)) {
-				return prev.remove(object);
+				prev.remove(object);
+				modCount++;
+				return true;
 			} else
 			// remove from current
 			if (current.contains(object)) {
@@ -235,6 +247,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 					size -= steps;
 				}
 
+				modCount++;
 				return true;
 			}
 			return false;
@@ -259,7 +272,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	@Override
 	public Iterator<T> iterator() {
 		synchronized (lock) {
-			return new Itr(new ArrayList<>(current));
+			return new Itr();
 		}
 	}
 
@@ -344,12 +357,15 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 				c = new ArrayList<>();
 			}
 			boolean changed = prev.retainAll(c);
+			if (changed) {
+				modCount++;
+			}
 
 			Iterator<T> i = iterator();
 			while (i.hasNext()) {
 				T next = i.next();
 				if (!c.contains(next)) {
-					remove(next);
+					i.remove();
 					changed = true;
 				}
 			}
@@ -403,7 +419,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public StepCollection<T> clone() {
+	public Object clone() {
 		synchronized (lock) {
 			StepCollection<T> o = new StepCollection<>(steps);
 			o.current = (TreeSet<T>) current.clone();
@@ -434,23 +450,61 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	}
 
 	private class Itr implements Iterator<T> {
-		private final Iterator<T> i;
-
-		public Itr(ArrayList<T> list) {
-			this.i = list.iterator();
-		}
+		private int expectedModCount = modCount;
+		private int cursor = -1;
+		private int lastRet = -1;
 
 		public boolean hasNext() {
-			return i.hasNext();
+			synchronized (this) {
+				checkForComodification();
+
+				ArrayList<T> array = getArray();
+
+				return cursor + 1 < array.size();
+			}
 		}
 
 		public T next() {
-			return i.next();
+			synchronized (this) {
+				cursor++;
+				ArrayList<T> array = getArray();
+
+				if (cursor >= array.size()) {
+					throw new NoSuchElementException();
+				}
+
+				checkForComodification();
+
+				lastRet = cursor;
+
+				return array.get(cursor);
+			}
 		}
 
 		public void remove() {
-			// TODO implement
-			throw new UnsupportedOperationException();
+			synchronized (this) {
+				if (lastRet == -1) {
+					throw new IllegalStateException();
+				}
+
+				checkForComodification();
+
+				ArrayList<T> array = getArray();
+				T del = array.get(lastRet);
+				StepCollection.this.remove(del);
+				expectedModCount++;
+				cursor--;
+			}
+		}
+
+		private ArrayList<T> getArray() {
+			return new ArrayList<T>(current);
+		}
+
+		final void checkForComodification() {
+			if (modCount != expectedModCount) {
+				throw new ConcurrentModificationException();
+			}
 		}
 	}
 }
