@@ -738,6 +738,75 @@ public class StepCollectionTest {
 	}
 
 	@Test
+	public void testRetainAll() {
+		StepCollection<String> list = new StepCollection<>(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+
+		assertTrue(list.retainAll(null));
+		assertTrue(list.isEmpty());
+
+		ArrayList<String> tmpList = new ArrayList<>();
+		list = new StepCollection<>(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+
+		assertTrue(list.retainAll(tmpList));
+		assertTrue(list.isEmpty());
+
+		list = new StepCollection<>(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+
+		tmpList.add("3");
+		tmpList.add("4");
+
+		assertTrue(list.retainAll(tmpList));
+		assertFalse(list.contains("1"));
+		assertFalse(list.contains("2"));
+		assertTrue(list.contains("3"));
+		assertTrue(list.contains("4"));
+
+		list = new StepCollection<>(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+
+		tmpList = new ArrayList<>();
+		tmpList.add("1");
+		tmpList.add("2");
+
+		assertTrue(list.retainAll(tmpList));
+		assertTrue(list.contains("1"));
+		assertTrue(list.contains("2"));
+		assertFalse(list.contains("3"));
+		assertFalse(list.contains("4"));
+
+		list = new StepCollection<>(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+
+		tmpList = new ArrayList<>();
+		tmpList.add("2");
+		tmpList.add("3");
+
+		assertTrue(list.retainAll(tmpList));
+		assertFalse(list.contains("1"));
+		assertTrue(list.contains("2"));
+		assertTrue(list.contains("3"));
+		assertFalse(list.contains("4"));
+	}
+
+	@Test
 	public void testReorder() {
 		StepCollection<ReorderEntity> list = new StepCollection<>(2);
 		ReorderEntity r1 = new ReorderEntity("1", "1");

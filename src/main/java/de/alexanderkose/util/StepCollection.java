@@ -339,7 +339,23 @@ public class StepCollection<T extends Comparable<T>> implements Collection<T> {
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		throw new RuntimeException("Not yet implemented");
+		synchronized (lock) {
+			if (c == null) {
+				c = new ArrayList<>();
+			}
+			boolean changed = prev.retainAll(c);
+
+			Iterator<T> i = iterator();
+			while (i.hasNext()) {
+				T next = i.next();
+				if (!c.contains(next)) {
+					remove(next);
+					changed = true;
+				}
+			}
+
+			return changed;
+		}
 	}
 
 	@Override
