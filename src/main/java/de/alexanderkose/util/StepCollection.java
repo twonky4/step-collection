@@ -76,8 +76,9 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			}
 
 			modCount++;
-			return true;
 		}
+
+		return true;
 	}
 
 	@Override
@@ -115,9 +116,8 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 
 			size += steps;
 			modCount++;
-
-			return list;
 		}
+		return list;
 	}
 
 	public Collection<T> prevStep() {
@@ -138,8 +138,8 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			size -= steps;
 			modCount++;
 
-			return list;
 		}
+		return list;
 	}
 
 	private void refreshMax() {
@@ -162,49 +162,59 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			return false;
 		}
 
+		boolean added = false;
 		synchronized (lock) {
-			boolean added = false;
 			for (T object : collection) {
 				boolean oneAdded = add(object);
 				if (oneAdded) {
 					added = true;
 				}
 			}
-			return added;
 		}
+		return added;
 	}
 
 	@Override
 	public int size() {
+		int size;
 		synchronized (lock) {
-			return current.size();
+			size = current.size();
 		}
+		return size;
 	}
 
 	@Override
 	public boolean isEmpty() {
+		boolean empty;
 		synchronized (lock) {
-			return current.isEmpty();
+			empty = current.isEmpty();
 		}
+		return empty;
 	}
 
 	public boolean isStepable() {
+		boolean stepable;
 		synchronized (lock) {
-			return !prev.isEmpty();
+			stepable = !prev.isEmpty();
 		}
+		return stepable;
 	}
 
 	public boolean isPrevStepable() {
+		boolean prevStepable;
 		synchronized (lock) {
-			return size > steps;
+			prevStepable = size > steps;
 		}
+		return prevStepable;
 	}
 
 	@Override
 	public boolean contains(Object object) {
+		boolean contains;
 		synchronized (lock) {
-			return current.contains(object);
+			contains = current.contains(object);
 		}
+		return contains;
 	}
 
 	private T getLastPrev() {
@@ -250,43 +260,49 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 				modCount++;
 				return true;
 			}
-			return false;
 		}
+		return false;
 	}
 
 	@Override
 	public Object[] toArray() {
+		Object[] array;
 		synchronized (lock) {
-			return current.toArray();
+			array = current.toArray();
 		}
+		return array;
 	}
 
 	@SuppressWarnings("hiding")
 	@Override
 	public <T> T[] toArray(T[] contents) {
+		T[] array;
 		synchronized (lock) {
-			return current.toArray(contents);
+			array = current.toArray(contents);
 		}
+		return array;
 	}
 
 	@Override
 	public Iterator<T> iterator() {
+		Itr itr;
 		synchronized (lock) {
-			return new Itr();
+			itr = new Itr();
 		}
+		return itr;
 	}
 
 	@Override
 	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
 		synchronized (lock) {
-			final int prime = 31;
-			int result = 1;
 			result = prime * result + getTreeSetHashCode(current);
 			result = prime * result + getTreeSetHashCode(prev);
 			result = prime * result + size;
 			result = prime * result + steps;
-			return result;
 		}
+		return result;
 	}
 
 	private int getTreeSetHashCode(TreeSet<T> set) {
@@ -334,9 +350,9 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 				if (steps != other.steps) {
 					return false;
 				}
-				return true;
 			}
 		}
+		return true;
 	}
 
 	@Override
@@ -345,18 +361,21 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			return false;
 		}
 
+		boolean containsAll;
 		synchronized (lock) {
-			return current.containsAll(c);
+			containsAll = current.containsAll(c);
 		}
+		return containsAll;
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
+		boolean changed;
 		synchronized (lock) {
 			if (c == null) {
 				c = new ArrayList<>();
 			}
-			boolean changed = prev.retainAll(c);
+			changed = prev.retainAll(c);
 			if (changed) {
 				modCount++;
 			}
@@ -369,9 +388,8 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 					changed = true;
 				}
 			}
-
-			return changed;
 		}
+		return changed;
 	}
 
 	@Override
@@ -380,8 +398,8 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			return false;
 		}
 
+		boolean removed = false;
 		synchronized (lock) {
-			boolean removed = false;
 			for (Object object : c) {
 				@SuppressWarnings("unchecked")
 				boolean oneRemoved = remove((T) object);
@@ -389,8 +407,8 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 					removed = true;
 				}
 			}
-			return removed;
 		}
+		return removed;
 	}
 
 	/**
@@ -399,6 +417,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	 * @return true, if order has changed
 	 */
 	public boolean reorder() {
+		boolean changed;
 		synchronized (lock) {
 			int oldHash = hashCode();
 			ArrayList<T> backUpList = new ArrayList<T>();
@@ -413,23 +432,25 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 				add(o);
 			}
 
-			return oldHash != hashCode();
+			changed = oldHash != hashCode();
 		}
+		return changed;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone() {
+		StepCollection<T> o;
 		synchronized (lock) {
-			StepCollection<T> o = new StepCollection<>(steps);
+			o = new StepCollection<>(steps);
 			o.current = (TreeSet<T>) current.clone();
 			o.prev = (TreeSet<T>) prev.clone();
 			o.maxCurrent = maxCurrent;
 			o.minCurrent = minCurrent;
 			o.size = size;
 
-			return o;
 		}
+		return o;
 	}
 
 	@Override
@@ -455,16 +476,19 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		private int lastRet = -1;
 
 		public boolean hasNext() {
+			boolean hasNext;
 			synchronized (this) {
 				checkForComodification();
 
 				ArrayList<T> array = getArray();
 
-				return cursor + 1 < array.size();
+				hasNext = cursor + 1 < array.size();
 			}
+			return hasNext;
 		}
 
 		public T next() {
+			T next;
 			synchronized (this) {
 				cursor++;
 				ArrayList<T> array = getArray();
@@ -477,8 +501,9 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 
 				lastRet = cursor;
 
-				return array.get(cursor);
+				next = array.get(cursor);
 			}
+			return next;
 		}
 
 		public void remove() {
