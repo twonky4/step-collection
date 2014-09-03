@@ -1,5 +1,8 @@
 package de.alexanderkose.util;
 
+import static de.alexanderkose.util.TestUtils.assertEmpty;
+import static de.alexanderkose.util.TestUtils.assertNotEmpty;
+import static de.alexanderkose.util.TestUtils.newSmallestList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -14,17 +17,17 @@ import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
-public class StepCollectionTest {
+public class StepCollectionSmallestTest {
 	@Test
 	public void testIsEmpty() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		assertTrue(list.isEmpty());
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertTrue(list.add("1"));
 		assertFalse(list.isEmpty());
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertTrue(list.add("1"));
 		assertTrue(list.add("2"));
 		assertTrue(list.add("3"));
@@ -36,32 +39,32 @@ public class StepCollectionTest {
 
 	@Test
 	public void testRemoveObject() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		assertFalse(list.remove("0"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertFalse(list.remove(null));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		assertTrue(list.remove("1"));
 		assertFalse(list.remove("1"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 
 		assertTrue(list.remove("2"));
 		assertTrue(list.remove("1"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 
 		assertTrue(list.remove("1"));
 		assertTrue(list.remove("2"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -76,7 +79,7 @@ public class StepCollectionTest {
 		assertTrue(list.remove("1"));
 		assertFalse(list.remove("0"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -90,13 +93,13 @@ public class StepCollectionTest {
 
 	@Test
 	public void testRemoveIndex() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		list.add("1");
 		String remove = list.remove(0);
 		assertNotNull(remove);
 		assertEquals("1", remove);
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 
@@ -107,7 +110,7 @@ public class StepCollectionTest {
 		assertNotNull(remove);
 		assertEquals("2", remove);
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 
@@ -118,7 +121,7 @@ public class StepCollectionTest {
 		assertNotNull(remove);
 		assertEquals("1", remove);
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 
@@ -131,17 +134,17 @@ public class StepCollectionTest {
 
 	@Test
 	public void testAddObject() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		assertTrue(list.add("0"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertFalse(list.add(null));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertTrue(list.add("1"));
 		assertFalse(list.add("1"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertTrue(list.add("1"));
 		assertTrue(list.add("2"));
 		assertTrue(list.add("3"));
@@ -151,7 +154,7 @@ public class StepCollectionTest {
 		assertFalse(list.add("6"));
 		assertFalse(list.add("1"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertTrue(list.add("6"));
 		assertTrue(list.add("5"));
 		assertTrue(list.add("4"));
@@ -159,7 +162,7 @@ public class StepCollectionTest {
 		assertTrue(list.add("2"));
 		assertTrue(list.add("1"));
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("3");
 		list.remove("1");
@@ -168,7 +171,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testClear() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		list.add("0");
 		assertFalse(list.isEmpty());
 
@@ -176,7 +179,7 @@ public class StepCollectionTest {
 
 		assertTrue(list.isEmpty());
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -193,7 +196,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testNextStep() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -233,11 +236,11 @@ public class StepCollectionTest {
 		nextStep = list.nextStep();
 		assertEmpty(nextStep);
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		nextStep = list.nextStep();
 		assertEmpty(nextStep);
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -254,7 +257,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testPrevStep() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -280,14 +283,14 @@ public class StepCollectionTest {
 
 	@Test
 	public void testContains() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		assertFalse(list.contains("0"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		assertTrue(list.contains("1"));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -307,18 +310,18 @@ public class StepCollectionTest {
 
 	@Test
 	public void testAddAll() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		assertFalse(list.addAll(null));
 
 		ArrayList<String> tmpList = new ArrayList<>();
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertFalse(list.addAll(tmpList));
 
 		tmpList.add("1");
 		tmpList.add("5");
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertTrue(list.addAll(tmpList));
 		assertFalse(list.addAll(tmpList));
 
@@ -326,7 +329,7 @@ public class StepCollectionTest {
 		tmpList.add("3");
 		tmpList.add("4");
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertTrue(list.addAll(tmpList));
 
 		tmpList.add("6");
@@ -336,7 +339,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIterator1() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -382,7 +385,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIterator2() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		list.add("7");
 		list.add("6");
 		list.add("5");
@@ -428,7 +431,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIterator3() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		list.add("7");
 		list.add("6");
 		list.add("5");
@@ -438,31 +441,6 @@ public class StepCollectionTest {
 		list.add("1");
 
 		Iterator<String> iterator = list.iterator();
-
-		assertTrue(iterator.hasNext());
-		String next = iterator.next();
-		assertNotNull(next);
-		assertEquals("1", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("2", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("3", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("4", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("5", next);
 
 		list.nextStep();
 
@@ -475,7 +453,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIterator4() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		list.add("7");
 		list.add("6");
 		list.add("5");
@@ -533,7 +511,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIterator5() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		list.add("7");
 		list.add("6");
 		list.add("5");
@@ -551,7 +529,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIterator6() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		list.add("7");
 		list.add("6");
 		list.add("5");
@@ -566,6 +544,8 @@ public class StepCollectionTest {
 		i1.next();
 		i2.next();
 		list.remove("7");
+		i1.next();
+		list.remove("1");
 
 		try {
 			i1.next();
@@ -576,7 +556,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIterator7() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 
 		Iterator<String> i = list.iterator();
 
@@ -589,38 +569,38 @@ public class StepCollectionTest {
 
 	@Test
 	public void testRemoveAll() {
-		StepCollection<String> list = new StepCollection<>(5);
+		StepCollection<String> list = newSmallestList(5);
 		assertFalse(list.removeAll(null));
 
 		ArrayList<String> tmpList = new ArrayList<String>();
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertFalse(list.removeAll(tmpList));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		ArrayList<Integer> intList = new ArrayList<Integer>();
 		intList.add(5);
 		assertFalse(list.removeAll(intList));
 
 		tmpList.add("5");
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		assertFalse(list.removeAll(tmpList));
 
-		list = new StepCollection<>(5);
+		list = newSmallestList(5);
 		list.add("5");
 		assertTrue(list.removeAll(tmpList));
 	}
 
 	@Test
 	public void testHashCode() {
-		StepCollection<String> list1 = new StepCollection<>(2);
-		StepCollection<String> list2 = new StepCollection<>(2);
+		StepCollection<String> list1 = newSmallestList(2);
+		StepCollection<String> list2 = newSmallestList(2);
 
 		assertTrue(list1.hashCode() == list2.hashCode());
 
-		list1 = new StepCollection<>(2);
-		list2 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
+		list2 = newSmallestList(2);
 		list1.add("1");
 		list1.add("2");
 		list1.add("3");
@@ -630,8 +610,8 @@ public class StepCollectionTest {
 
 		assertTrue(list1.hashCode() == list2.hashCode());
 
-		list1 = new StepCollection<>(2);
-		list2 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
+		list2 = newSmallestList(2);
 		list1.add("1");
 		list1.add("2");
 		list1.add("3");
@@ -645,7 +625,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testToArray() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		list.add("3");
 		list.add("1");
 		list.add("2");
@@ -661,7 +641,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testToArrayType() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		list.add("3");
 		list.add("1");
 		list.add("2");
@@ -676,50 +656,54 @@ public class StepCollectionTest {
 	}
 
 	@Test
-	public void testEuqals() {
-		StepCollection<String> list1 = new StepCollection<>(2);
+	public void testEquals() {
+		StepCollection<String> list1 = newSmallestList(2);
 		assertFalse(list1.equals(null));
 
-		list1 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
 		assertFalse(list1.equals(new Object()));
 
-		list1 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
 		assertTrue(list1.equals(list1));
 
-		list1 = new StepCollection<>(2);
-		StepCollection<String> list2 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
+		StepCollection<String> list2 = newSmallestList(2);
 		assertTrue(list1.equals(list2));
 
-		list1 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
 		list2 = new StepCollection<>(3);
 		assertFalse(list1.equals(list2));
 
-		list1 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
+		list2 = new StepCollection<>(2, false);
+		assertFalse(list1.equals(list2));
+
+		list1 = newSmallestList(2);
 		list1.add("1");
 		list1.add("2");
 		list1.add("3");
-		list2 = new StepCollection<>(2);
+		list2 = newSmallestList(2);
 		list2.add("1");
 		list2.add("2");
 		list2.add("3");
 		assertTrue(list1.equals(list2));
 
-		list1 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
 		list1.add("1");
 		list1.add("2");
 		list1.add("3");
 		list1.nextStep();
-		list2 = new StepCollection<>(2);
+		list2 = newSmallestList(2);
 		list2.add("1");
 		list2.add("2");
 		list2.add("3");
 		assertFalse(list1.equals(list2));
 
-		list1 = new StepCollection<>(2);
+		list1 = newSmallestList(2);
 		list1.add("1");
 		list1.add("2");
 		list1.add("3");
-		list2 = new StepCollection<>(2);
+		list2 = newSmallestList(2);
 		list2.add("1");
 		list2.add("2");
 		assertFalse(list1.equals(list2));
@@ -729,7 +713,7 @@ public class StepCollectionTest {
 		list1.add("2");
 		list1.add("3");
 		list1.add("4");
-		list2 = new StepCollection<>(2);
+		list2 = newSmallestList(2);
 		list2.add("1");
 		list2.add("2");
 		list2.add("3");
@@ -740,32 +724,32 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIsStepable() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		assertFalse(list.isStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		assertFalse(list.isStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		assertFalse(list.isStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
 		assertTrue(list.isStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
 		list.nextStep();
 		assertFalse(list.isStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -777,32 +761,32 @@ public class StepCollectionTest {
 
 	@Test
 	public void testIsPrevStepable() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		assertFalse(list.isPrevStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		assertFalse(list.isPrevStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		assertFalse(list.isPrevStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
 		assertFalse(list.isPrevStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
 		list.nextStep();
 		assertTrue(list.isPrevStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -810,7 +794,7 @@ public class StepCollectionTest {
 		list.remove("3");
 		assertFalse(list.isPrevStepable());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -822,11 +806,11 @@ public class StepCollectionTest {
 
 	@Test
 	public void testContainsAll() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 
 		assertFalse(list.containsAll(null));
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		ArrayList<String> tmpList = new ArrayList<String>();
 		tmpList.add("1");
@@ -836,7 +820,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testRetainAll() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -846,7 +830,7 @@ public class StepCollectionTest {
 		assertTrue(list.isEmpty());
 
 		ArrayList<String> tmpList = new ArrayList<>();
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -855,7 +839,7 @@ public class StepCollectionTest {
 		assertTrue(list.retainAll(tmpList));
 		assertTrue(list.isEmpty());
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -870,7 +854,7 @@ public class StepCollectionTest {
 		assertTrue(list.contains("3"));
 		assertTrue(list.contains("4"));
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -886,7 +870,7 @@ public class StepCollectionTest {
 		assertFalse(list.contains("3"));
 		assertFalse(list.contains("4"));
 
-		list = new StepCollection<>(2);
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -905,7 +889,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testClone() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -926,7 +910,26 @@ public class StepCollectionTest {
 
 	@Test
 	public void testToString() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
+		list.add("1");
+		list.add("2");
+
+		assertEquals(
+				"StepCollection [currentWindow=[1, 2], outOfWindow=[], steps=2, size=2]",
+				list.toString());
+
+		list = newSmallestList(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+
+		assertEquals(
+				"StepCollection [currentWindow=[1, 2], outOfWindow=[3, 4, 5], steps=2, size=2]",
+				list.toString());
+
+		list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -941,7 +944,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testGet() {
-		StepCollection<String> list = new StepCollection<>(2);
+		StepCollection<String> list = newSmallestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
@@ -957,7 +960,7 @@ public class StepCollectionTest {
 
 	@Test
 	public void testReorder() {
-		StepCollection<ReorderEntity> list = new StepCollection<>(2);
+		StepCollection<ReorderEntity> list = newSmallestList(2);
 		ReorderEntity r1 = new ReorderEntity("1", "1");
 		ReorderEntity r2 = new ReorderEntity("2", "2");
 		ReorderEntity r3 = new ReorderEntity("3", "3");
@@ -1046,15 +1049,5 @@ public class StepCollectionTest {
 			}
 			return true;
 		}
-	}
-
-	private static void assertNotEmpty(Collection<String> nextStep) {
-		assertNotNull(nextStep);
-		assertFalse(nextStep.isEmpty());
-	}
-
-	private static void assertEmpty(Collection<String> nextStep) {
-		assertNotNull(nextStep);
-		assertTrue(nextStep.isEmpty());
 	}
 }

@@ -14,6 +14,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	private TreeSet<T> current;
 	private TreeSet<T> prev;
 	private final int steps;
+	private final boolean windowSmallest;
 
 	private int size;
 	private int modCount = 0;
@@ -22,11 +23,16 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	private T minCurrent;
 
 	public StepCollection(int size) {
+		this(size, true);
+	}
+
+	public StepCollection(int size, boolean windowSmallest) {
 		current = new TreeSet<>();
 		prev = new TreeSet<>();
 
 		this.size = size;
 		steps = size;
+		this.windowSmallest = windowSmallest;
 	}
 
 	@Override
@@ -46,36 +52,35 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 				minCurrent = object;
 
 				current.add(object);
+
+				modCount++;
 			}
 			// second element, array full
 			else if (size() >= size) {
-				if (object.compareTo(minCurrent) > 0) {
+				if ((windowSmallest && object.compareTo(minCurrent) > 0)
+						|| (!windowSmallest && object.compareTo(minCurrent) < 0)) {
 					prev.add(object);
 				} else {
-					current.remove(minCurrent);
-					prev.add(minCurrent);
-					minCurrent = null;
+					T shift = minCurrent;
+					current.remove(shift);
+					prev.add(shift);
 					current.add(object);
 
-					if (object.compareTo(maxCurrent) < 0) {
-						maxCurrent = object;
-					}
 					refreshMin();
+					refreshMax();
+
+					modCount++;
 				}
 			}
 			// second element, array not full
 			else {
-				if (object.compareTo(maxCurrent) < 0) {
-					maxCurrent = object;
-				} else if (object.compareTo(minCurrent) > 0) {
-					minCurrent = object;
-				}
-
 				current.add(object);
 
-			}
+				refreshMin();
+				refreshMax();
 
-			modCount++;
+				modCount++;
+			}
 		}
 
 		return true;
@@ -129,7 +134,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			}
 
 			for (int i = 0; i < steps; i++) {
-				T last = current.last();
+				T last = windowSmallest ? current.last() : current.first();
 				current.remove(last);
 				list.add(last);
 				prev.add(last);
@@ -145,14 +150,14 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	private void refreshMax() {
 		maxCurrent = null;
 		if (!current.isEmpty()) {
-			maxCurrent = current.first();
+			maxCurrent = windowSmallest ? current.first() : current.last();
 		}
 	}
 
 	private void refreshMin() {
 		minCurrent = null;
 		if (!current.isEmpty()) {
-			minCurrent = current.last();
+			minCurrent = windowSmallest ? current.last() : current.first();
 		}
 	}
 
@@ -221,7 +226,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		if (prev.isEmpty()) {
 			return null;
 		}
-		return prev.first();
+		return windowSmallest ? prev.first() : prev.last();
 	}
 
 	@Override
@@ -234,7 +239,6 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			// remove from prev
 			if (prev.contains(object)) {
 				prev.remove(object);
-				modCount++;
 				return true;
 			} else
 			// remove from current
@@ -292,19 +296,6 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		return itr;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		synchronized (lock) {
-			result = prime * result + getTreeSetHashCode(current);
-			result = prime * result + getTreeSetHashCode(prev);
-			result = prime * result + size;
-			result = prime * result + steps;
-		}
-		return result;
-	}
-
 	private int getTreeSetHashCode(TreeSet<T> set) {
 		Iterator<T> it = set.iterator();
 		if (!it.hasNext()) {
@@ -320,6 +311,20 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			}
 			sb.append(',');
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		synchronized (lock) {
+			result = prime * result + getTreeSetHashCode(current);
+			result = prime * result + getTreeSetHashCode(prev);
+			result = prime * result + size;
+			result = prime * result + steps;
+			result = prime * result + (windowSmallest ? 1231 : 1237);
+		}
+		return result;
 	}
 
 	@Override
@@ -348,6 +353,9 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 					return false;
 				}
 				if (steps != other.steps) {
+					return false;
+				}
+				if (windowSmallest != other.windowSmallest) {
 					return false;
 				}
 			}
@@ -444,13 +452,12 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	public Object clone() {
 		StepCollection<T> o;
 		synchronized (lock) {
-			o = new StepCollection<>(steps);
+			o = new StepCollection<>(steps, windowSmallest);
 			o.current = (TreeSet<T>) current.clone();
 			o.prev = (TreeSet<T>) prev.clone();
 			o.maxCurrent = maxCurrent;
 			o.minCurrent = minCurrent;
 			o.size = size;
-
 		}
 		return o;
 	}
@@ -466,6 +473,9 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			sb.append(steps);
 			sb.append(", size=");
 			sb.append(size);
+			if (!windowSmallest) {
+				sb.append(", windowOnEnd=true");
+			}
 		}
 		sb.append(']');
 
