@@ -491,6 +491,28 @@ public class StepCollectionTest {
 	}
 
 	@Test
+	public void testIterator5() {
+		StepCollection<String> list = new StepCollection<>(5);
+		list.add("7");
+		list.add("6");
+		list.add("5");
+		list.add("4");
+		list.add("3");
+		list.add("2");
+		list.add("1");
+
+		list.nextStep();
+
+		Iterator<String> i = list.iterator();
+
+		try {
+			i.remove();
+			fail();
+		} catch (UnsupportedOperationException e) {
+		}
+	}
+
+	@Test
 	public void testRemoveAll() {
 		StepCollection<String> list = new StepCollection<>(5);
 		assertFalse(list.removeAll(null));

@@ -259,8 +259,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	@Override
 	public Iterator<T> iterator() {
 		synchronized (lock) {
-			ArrayList<T> list = new ArrayList<>(current);
-			return list.iterator();
+			return new Itr(new ArrayList<>(current));
 		}
 	}
 
@@ -432,5 +431,26 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		sb.append(']');
 
 		return sb.toString();
+	}
+
+	private class Itr implements Iterator<T> {
+		private final Iterator<T> i;
+
+		public Itr(ArrayList<T> list) {
+			this.i = list.iterator();
+		}
+
+		public boolean hasNext() {
+			return i.hasNext();
+		}
+
+		public T next() {
+			return i.next();
+		}
+
+		public void remove() {
+			// TODO implement
+			throw new UnsupportedOperationException();
+		}
 	}
 }
