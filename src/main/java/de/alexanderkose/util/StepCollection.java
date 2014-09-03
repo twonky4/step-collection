@@ -212,7 +212,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	public boolean contains(Object object) {
 		boolean contains;
 		synchronized (lock) {
-			contains = current.contains(object);
+			contains = current.contains(object) || prev.contains(object);
 		}
 		return contains;
 	}
@@ -362,8 +362,11 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		}
 
 		boolean containsAll;
+		TreeSet<Object> set = new TreeSet<>();
 		synchronized (lock) {
-			containsAll = current.containsAll(c);
+			set.addAll(current);
+			set.addAll(prev);
+			containsAll = set.containsAll(c);
 		}
 		return containsAll;
 	}

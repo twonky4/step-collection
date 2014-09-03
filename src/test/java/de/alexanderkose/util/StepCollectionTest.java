@@ -260,8 +260,8 @@ public class StepCollectionTest {
 		assertTrue(list.contains("3"));
 		assertTrue(list.contains("4"));
 		assertTrue(list.contains("5"));
-		assertFalse(list.contains("6"));
-		assertFalse(list.contains("7"));
+		assertTrue(list.contains("6"));
+		assertTrue(list.contains("7"));
 	}
 
 	@Test
