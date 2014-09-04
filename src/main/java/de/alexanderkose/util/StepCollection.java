@@ -62,9 +62,13 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 						|| (!windowSmallest && object.compareTo(minCurrent) < 0)) {
 					prev.add(object);
 				} else {
-					T shift = minCurrent;
-					current.remove(shift);
-					prev.add(shift);
+					if (!autoResizeWindowForNew) {
+						T shift = minCurrent;
+						current.remove(shift);
+						prev.add(shift);
+					} else {
+						size++;
+					}
 					current.add(object);
 
 					refreshMin();
@@ -195,14 +199,8 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			int oldSize = size;
 			clear();
 			size = oldSize;
-			for (T object : collection) {
-				add(object);
-			}
-
-			int currentSize = current.size();
-			int currentSteps = currentSize / steps;
-			currentSteps += currentSize % steps > 1 ? 1 : 0;
-			size = currentSteps * steps;
+			current.addAll(collection);
+			reorder();
 
 			modCount++;
 
@@ -475,9 +473,12 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			clear();
 
 			size = backUpSize;
+			boolean oldAutoResizeWindowForNew = autoResizeWindowForNew;
+			autoResizeWindowForNew = false;
 			for (T o : backUpList) {
 				add(o);
 			}
+			autoResizeWindowForNew = oldAutoResizeWindowForNew;
 
 			changed = oldHash != hashCode();
 		}

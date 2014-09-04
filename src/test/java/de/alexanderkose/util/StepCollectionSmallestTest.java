@@ -283,6 +283,21 @@ public class StepCollectionSmallestTest {
 		tmpList.add("1");
 		tmpList.add("5");
 
+		list = newSmallestList(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+		list.nextStep();
+		list.nextStep();
+		assertTrue(list.set(tmpList));
+		assertNotEmpty(list);
+		assertEquals("1", list.get(0));
+		assertEquals("5", list.get(1));
+
 		list = newSmallestList(5);
 		assertTrue(list.set(tmpList));
 		assertNotEmpty(list);
@@ -678,5 +693,19 @@ public class StepCollectionSmallestTest {
 		assertEquals(r3, i.next());
 		assertEquals(r4, i.next());
 		assertEquals(r5, i.next());
+	}
+
+	@Test
+	public void testAutoResizeWindowForNew() {
+		StepCollection<String> list = newSmallestList(2);
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.setAutoResizeWindowForNew(true);
+		list.add("1");
+		assertEquals(3, list.size());
+		assertEquals("1", list.get(0));
+		assertEquals("2", list.get(1));
+		assertEquals("3", list.get(2));
 	}
 }
