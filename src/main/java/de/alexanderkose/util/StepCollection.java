@@ -17,6 +17,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	private final boolean windowSmallest;
 
 	private int size;
+	private boolean autoResizeWindowForNew = false;
 	private int modCount = 0;
 
 	private T maxCurrent;
@@ -179,6 +180,38 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		return added;
 	}
 
+	public void setAutoResizeWindowForNew(boolean autoResizeWindowForNew) {
+		this.autoResizeWindowForNew = autoResizeWindowForNew;
+	}
+
+	public boolean set(Collection<? extends T> collection) {
+		if (collection == null || (collection.isEmpty() && isEmpty())) {
+			return false;
+		}
+
+		boolean changed;
+		synchronized (lock) {
+			int oldHash = hashCode();
+			int oldSize = size;
+			clear();
+			size = oldSize;
+			for (T object : collection) {
+				add(object);
+			}
+
+			int currentSize = current.size();
+			int currentSteps = currentSize / steps;
+			currentSteps += currentSize % steps > 1 ? 1 : 0;
+			size = currentSteps * steps;
+
+			modCount++;
+
+			changed = oldHash != hashCode();
+		}
+
+		return changed;
+	}
+
 	@Override
 	public int size() {
 		int size;
@@ -322,6 +355,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			result = prime * result + getTreeSetHashCode(prev);
 			result = prime * result + size;
 			result = prime * result + steps;
+			result = prime * result + (autoResizeWindowForNew ? 1231 : 1237);
 			result = prime * result + (windowSmallest ? 1231 : 1237);
 		}
 		return result;
@@ -353,6 +387,9 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 					return false;
 				}
 				if (steps != other.steps) {
+					return false;
+				}
+				if (autoResizeWindowForNew != other.autoResizeWindowForNew) {
 					return false;
 				}
 				if (windowSmallest != other.windowSmallest) {
@@ -458,6 +495,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			o.maxCurrent = maxCurrent;
 			o.minCurrent = minCurrent;
 			o.size = size;
+			o.autoResizeWindowForNew = autoResizeWindowForNew;
 		}
 		return o;
 	}
@@ -473,6 +511,8 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 			sb.append(steps);
 			sb.append(", size=");
 			sb.append(size);
+			sb.append(", autoResizeWindowForNew=");
+			sb.append(autoResizeWindowForNew);
 			if (!windowSmallest) {
 				sb.append(", windowOnEnd=true");
 			}

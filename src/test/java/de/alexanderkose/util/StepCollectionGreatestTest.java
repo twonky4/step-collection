@@ -11,32 +11,12 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
 public class StepCollectionGreatestTest {
-	@Test
-	public void testIsEmpty() {
-		StepCollection<String> list = newGreatestList(5);
-		assertTrue(list.isEmpty());
-
-		list = newGreatestList(5);
-		assertTrue(list.add("1"));
-		assertFalse(list.isEmpty());
-
-		list = newGreatestList(5);
-		assertTrue(list.add("1"));
-		assertTrue(list.add("2"));
-		assertTrue(list.add("3"));
-		assertTrue(list.add("4"));
-		assertTrue(list.add("5"));
-		assertTrue(list.add("6"));
-		assertFalse(list.isEmpty());
-	}
-
 	@Test
 	public void testRemoveObject() {
 		StepCollection<String> list = newGreatestList(5);
@@ -170,31 +150,6 @@ public class StepCollectionGreatestTest {
 	}
 
 	@Test
-	public void testClear() {
-		StepCollection<String> list = newGreatestList(5);
-		list.add("0");
-		assertFalse(list.isEmpty());
-
-		list.clear();
-
-		assertTrue(list.isEmpty());
-
-		list = newGreatestList(5);
-		list.add("1");
-		list.add("2");
-		list.add("3");
-		list.add("4");
-		list.add("5");
-		list.add("6");
-
-		assertFalse(list.isEmpty());
-
-		list.clear();
-
-		assertTrue(list.isEmpty());
-	}
-
-	@Test
 	public void testNextStep() {
 		StepCollection<String> list = newGreatestList(2);
 		list.add("1");
@@ -282,33 +237,6 @@ public class StepCollectionGreatestTest {
 	}
 
 	@Test
-	public void testContains() {
-		StepCollection<String> list = newGreatestList(5);
-		assertFalse(list.contains("0"));
-
-		list = newGreatestList(5);
-		list.add("1");
-		assertTrue(list.contains("1"));
-
-		list = newGreatestList(5);
-		list.add("1");
-		list.add("2");
-		list.add("3");
-		list.add("4");
-		list.add("5");
-		list.add("6");
-		list.add("7");
-
-		assertTrue(list.contains("1"));
-		assertTrue(list.contains("2"));
-		assertTrue(list.contains("3"));
-		assertTrue(list.contains("4"));
-		assertTrue(list.contains("5"));
-		assertTrue(list.contains("6"));
-		assertTrue(list.contains("7"));
-	}
-
-	@Test
 	public void testAddAll() {
 		StepCollection<String> list = newGreatestList(5);
 		assertFalse(list.addAll(null));
@@ -338,124 +266,75 @@ public class StepCollectionGreatestTest {
 	}
 
 	@Test
-	public void testIterator1() {
+	public void testSet() {
 		StepCollection<String> list = newGreatestList(5);
+		assertFalse(list.set(null));
+
+		ArrayList<String> tmpList = new ArrayList<>();
+
+		list = newGreatestList(5);
+		assertFalse(list.set(tmpList));
+
+		list = newGreatestList(5);
+		list.add("1");
+		assertTrue(list.set(tmpList));
+		assertEmpty(list);
+
+		tmpList.add("1");
+		tmpList.add("5");
+
+		list = newGreatestList(5);
+		assertTrue(list.set(tmpList));
+		assertNotEmpty(list);
+		assertEquals("1", list.get(0));
+		assertEquals("5", list.get(1));
+		assertFalse(list.set(tmpList));
+
+		tmpList.add("2");
+		tmpList.add("8");
+		tmpList.add("9");
+
+		list = newGreatestList(2);
 		list.add("1");
 		list.add("2");
 		list.add("3");
 		list.add("4");
 		list.add("5");
-		list.add("6");
-		list.add("7");
-
-		Iterator<String> iterator = list.iterator();
-
-		assertTrue(iterator.hasNext());
-		String next = iterator.next();
-		assertNotNull(next);
-		assertEquals("3", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("4", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("5", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("6", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("7", next);
-
-		assertFalse(iterator.hasNext());
-		try {
-			next = iterator.next();
-			fail();
-		} catch (NoSuchElementException e) {
-		}
-	}
-
-	@Test
-	public void testIterator2() {
-		StepCollection<String> list = newGreatestList(5);
-		list.add("7");
-		list.add("6");
-		list.add("5");
-		list.add("4");
-		list.add("3");
-		list.add("2");
-		list.add("1");
-
-		Iterator<String> iterator = list.iterator();
-
-		assertTrue(iterator.hasNext());
-		String next = iterator.next();
-		assertNotNull(next);
-		assertEquals("3", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("4", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("5", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("6", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("7", next);
-
-		assertFalse(iterator.hasNext());
-		try {
-			next = iterator.next();
-			fail();
-		} catch (NoSuchElementException e) {
-		}
-	}
-
-	@Test
-	public void testIterator3() {
-		StepCollection<String> list = newGreatestList(5);
-		list.add("7");
-		list.add("6");
-		list.add("5");
-		list.add("4");
-		list.add("3");
-		list.add("2");
-		list.add("1");
-
 		list.nextStep();
+		assertTrue(list.set(tmpList));
+		assertEquals(4, list.size());
+		assertEquals("2", list.get(0));
+		assertEquals("5", list.get(1));
+		assertEquals("8", list.get(2));
+		assertEquals("9", list.get(3));
+
+		list = newGreatestList(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		assertTrue(list.set(tmpList));
+		assertEquals(2, list.size());
+		assertEquals("8", list.get(0));
+		assertEquals("9", list.get(1));
+	}
+
+	@Test
+	public void testIteratorSorted() {
+		StepCollection<String> list = newGreatestList(5);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
 
 		Iterator<String> iterator = list.iterator();
 
 		assertTrue(iterator.hasNext());
 		String next = iterator.next();
-		assertNotNull(next);
-		assertEquals("1", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
-		assertNotNull(next);
-		assertEquals("2", next);
-
-		assertTrue(iterator.hasNext());
-		next = iterator.next();
 		assertNotNull(next);
 		assertEquals("3", next);
 
@@ -488,7 +367,7 @@ public class StepCollectionGreatestTest {
 	}
 
 	@Test
-	public void testIterator4() {
+	public void testIteratorUnsorted() {
 		StepCollection<String> list = newGreatestList(5);
 		list.add("7");
 		list.add("6");
@@ -498,37 +377,38 @@ public class StepCollectionGreatestTest {
 		list.add("2");
 		list.add("1");
 
-		list.nextStep();
+		Iterator<String> iterator = list.iterator();
 
-		Iterator<String> i = list.iterator();
-		i.next();
-		i.remove();
-	}
+		assertTrue(iterator.hasNext());
+		String next = iterator.next();
+		assertNotNull(next);
+		assertEquals("3", next);
 
-	@Test
-	public void testIterator5() {
-		StepCollection<String> list = newGreatestList(5);
-		list.add("7");
-		list.add("6");
-		list.add("5");
-		list.add("4");
-		list.add("3");
-		list.add("2");
-		list.add("1");
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("4", next);
 
-		Iterator<String> i1 = list.iterator();
-		Iterator<String> i2 = list.iterator();
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("5", next);
 
-		i1.next();
-		i2.next();
-		list.remove("1");
-		i1.next();
-		list.remove("7");
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("6", next);
 
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertNotNull(next);
+		assertEquals("7", next);
+
+		assertFalse(iterator.hasNext());
 		try {
-			i1.next();
+			next = iterator.next();
 			fail();
-		} catch (ConcurrentModificationException e) {
+		} catch (NoSuchElementException e) {
 		}
 	}
 
@@ -672,20 +552,6 @@ public class StepCollectionGreatestTest {
 	}
 
 	@Test
-	public void testContainsAll() {
-		StepCollection<String> list = newGreatestList(2);
-
-		assertFalse(list.containsAll(null));
-
-		list = newGreatestList(2);
-		list.add("1");
-		ArrayList<String> tmpList = new ArrayList<String>();
-		tmpList.add("1");
-
-		assertTrue(list.containsAll(tmpList));
-	}
-
-	@Test
 	public void testRetainAll() {
 		StepCollection<String> list = newGreatestList(2);
 		list.add("1");
@@ -755,61 +621,6 @@ public class StepCollectionGreatestTest {
 	}
 
 	@Test
-	public void testClone() {
-		StepCollection<String> list = newGreatestList(2);
-		list.add("1");
-		list.add("2");
-		list.add("3");
-		list.add("4");
-		list.add("5");
-		list.nextStep();
-		int oHash = list.hashCode();
-
-		@SuppressWarnings("unchecked")
-		StepCollection<String> clone = (StepCollection<String>) list.clone();
-
-		assertTrue(oHash == clone.hashCode());
-
-		clone.add("6");
-
-		assertFalse(oHash == clone.hashCode());
-	}
-
-	@Test
-	public void testToString() {
-		StepCollection<String> list = newGreatestList(2);
-		list.add("1");
-		list.add("2");
-
-		assertEquals(
-				"StepCollection [currentWindow=[1, 2], outOfWindow=[], steps=2, size=2, windowOnEnd=true]",
-				list.toString());
-
-		list = newGreatestList(2);
-		list.add("1");
-		list.add("2");
-		list.add("3");
-		list.add("4");
-		list.add("5");
-
-		assertEquals(
-				"StepCollection [currentWindow=[4, 5], outOfWindow=[1, 2, 3], steps=2, size=2, windowOnEnd=true]",
-				list.toString());
-
-		list = newGreatestList(2);
-		list.add("1");
-		list.add("2");
-		list.add("3");
-		list.add("4");
-		list.add("5");
-		list.nextStep();
-
-		assertEquals(
-				"StepCollection [currentWindow=[2, 3, 4, 5], outOfWindow=[1], steps=2, size=4, windowOnEnd=true]",
-				list.toString());
-	}
-
-	@Test
 	public void testGet() {
 		StepCollection<String> list = newGreatestList(2);
 		list.add("1");
@@ -867,59 +678,5 @@ public class StepCollectionGreatestTest {
 		assertEquals(r3, i.next());
 		assertEquals(r4, i.next());
 		assertEquals(r5, i.next());
-	}
-
-	private class ReorderEntity implements Comparable<ReorderEntity> {
-		private final String value;
-		private String sort;
-
-		public ReorderEntity(String value, String sort) {
-			this.value = value;
-			this.sort = sort;
-		}
-
-		public void setSort(String sort) {
-			this.sort = sort;
-		}
-
-		@Override
-		public int compareTo(ReorderEntity o) {
-			return sort.compareTo(o.sort);
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((value == null) ? 0 : value.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			ReorderEntity other = (ReorderEntity) obj;
-			if (value == null) {
-				if (other.value != null) {
-					return false;
-				}
-			} else if (!value.equals(other.value)) {
-				return false;
-			}
-			return true;
-		}
-
-		@Override
-		public String toString() {
-			return value;
-		}
 	}
 }
