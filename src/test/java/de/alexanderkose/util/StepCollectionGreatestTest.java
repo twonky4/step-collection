@@ -211,6 +211,57 @@ public class StepCollectionGreatestTest {
 	}
 
 	@Test
+	public void testNextStepParam() {
+		StepCollection<String> list = newGreatestList(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+
+		assertEquals(2, list.size());
+
+		Collection<String> nextStep = list.nextStep(3);
+		assertNotEmpty(nextStep);
+		assertEquals(3, nextStep.size());
+		Iterator<String> i = nextStep.iterator();
+		assertEquals("5", i.next());
+		assertEquals("4", i.next());
+		assertEquals("3", i.next());
+
+		assertEquals(5, list.size());
+
+		nextStep = list.nextStep();
+		assertNotEmpty(nextStep);
+		assertEquals(2, nextStep.size());
+		i = nextStep.iterator();
+		assertEquals("2", i.next());
+		assertEquals("1", i.next());
+
+		assertEquals(7, list.size());
+
+		nextStep = list.nextStep();
+		assertEmpty(nextStep);
+
+		list = newGreatestList(2);
+		nextStep = list.nextStep();
+		assertEmpty(nextStep);
+
+		list = newGreatestList(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.nextStep(1);
+		list.remove("1");
+		list.add("1");
+
+		nextStep = list.nextStep();
+		assertEmpty(nextStep);
+	}
+
+	@Test
 	public void testPrevStep() {
 		StepCollection<String> list = newGreatestList(2);
 		list.add("1");
@@ -234,6 +285,31 @@ public class StepCollectionGreatestTest {
 		Iterator<String> i = prevStep.iterator();
 		assertEquals("4", i.next());
 		assertEquals("5", i.next());
+	}
+
+	@Test
+	public void testPrevStepParam() {
+		StepCollection<String> list = newGreatestList(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+
+		assertEquals(2, list.size());
+
+		Collection<String> prevStep = list.prevStep();
+		assertEmpty(prevStep);
+
+		list.nextStep();
+
+		prevStep = list.prevStep(1);
+		assertNotEmpty(prevStep);
+		assertEquals(1, prevStep.size());
+		Iterator<String> i = prevStep.iterator();
+		assertEquals("4", i.next());
 	}
 
 	@Test

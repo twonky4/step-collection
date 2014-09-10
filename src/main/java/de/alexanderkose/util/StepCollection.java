@@ -13,7 +13,7 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	private final Object lock = new Object();
 	private TreeSet<T> current;
 	private TreeSet<T> prev;
-	private final int steps;
+	private int steps;
 	private final boolean windowSmallest;
 
 	private int size;
@@ -22,6 +22,11 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 
 	private T maxCurrent;
 	private T minCurrent;
+
+	public StepCollection() {
+		this(1, true);
+		autoResizeWindowForNew = true;
+	}
 
 	public StepCollection(int size) {
 		this(size, true);
@@ -103,7 +108,15 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 		}
 	}
 
+	public void setSteps(int steps) {
+		this.steps = steps;
+	}
+
 	public Collection<T> nextStep() {
+		return nextStep(steps);
+	}
+
+	public Collection<T> nextStep(int steps) {
 		Collection<T> list = new ArrayList<>();
 		synchronized (lock) {
 			if (!isStepable()) {
@@ -112,7 +125,11 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 
 			if (prev.size() <= steps) {
 				current.addAll(prev);
-				list.addAll(prev);
+				while (!prev.isEmpty()) {
+					T last = getLastPrev();
+					list.add(last);
+					prev.remove(last);
+				}
 				prev.clear();
 				refreshMin();
 			} else {
@@ -131,6 +148,10 @@ public class StepCollection<T extends Comparable<T>> implements Cloneable,
 	}
 
 	public Collection<T> prevStep() {
+		return prevStep(steps);
+	}
+
+	public Collection<T> prevStep(int steps) {
 		Collection<T> list = new ArrayList<>();
 
 		synchronized (lock) {

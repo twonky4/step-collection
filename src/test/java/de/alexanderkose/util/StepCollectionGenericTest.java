@@ -379,6 +379,36 @@ public class StepCollectionGenericTest {
 	}
 
 	@Test
+	public void testSetSteps() {
+		StepCollection<String> list = newSmallestList(2);
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+		list.add("8");
+		list.add("9");
+
+		list.nextStep();
+
+		assertEquals(4, list.size());
+
+		list.setSteps(1);
+
+		list.nextStep();
+
+		assertEquals(5, list.size());
+
+		list.setSteps(3);
+
+		list.nextStep();
+
+		assertEquals(8, list.size());
+	}
+
+	@Test
 	public void testIteratorNextModify() {
 		StepCollection<String> list = newGreatestList(5);
 		list.add("7");
@@ -443,5 +473,19 @@ public class StepCollectionGenericTest {
 			fail();
 		} catch (IllegalStateException e) {
 		}
+	}
+
+	@Test
+	public void testEasyConstruct() {
+		StepCollection<String> list = new StepCollection<>();
+		list.add("6");
+		list.add("5");
+		list.add("4");
+		list.add("3");
+		list.add("2");
+		list.add("1");
+		list.add("7");
+
+		assertEquals(6, list.size());
 	}
 }
